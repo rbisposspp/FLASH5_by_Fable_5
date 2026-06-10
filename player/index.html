@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__LESSON_TITLE__</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="#mainContent" class="skip-link">Skip to main content</a>
+    <header>
+        <h1>__LESSON_TITLE__</h1>
+    </header>
+
+    <main id="mainContent">
+        <div class="tab-buttons" role="tablist" aria-label="Lesson sections">
+            <button id="flashcardTabButton" class="active" role="tab" aria-selected="true" aria-controls="flashcardTab" tabindex="0">Study Flashcards</button>
+            <button id="memoryGameTabButton" role="tab" aria-selected="false" aria-controls="memoryGameTab" tabindex="-1">Play Memory Game</button>
+        </div>
+
+        <div id="flashcardTab" class="tab-content active" role="tabpanel" aria-labelledby="flashcardTabButton">
+            <h2>Study Flashcards</h2>
+            <div id="flashcardInstructionsDisplay" class="instructions-display" aria-live="polite"></div>
+            <div class="flashcard-controls">
+                <p id="studyCardCountDisplay" class="micro-progress" aria-live="polite">0 cards ready to study.</p>
+                <button id="flipAllButton" type="button">Flip All Cards</button>
+                <button id="shuffleDeckButton" type="button">Shuffle Deck</button>
+                <label class="toggle-switch-label">
+                    <input type="checkbox" id="reverseFlashcardsToggle">
+                    <span class="slider"></span>
+                    Show Word/Back First
+                </label>
+                <label for="studyModeSelect">Study Mode:</label>
+                <select id="studyModeSelect">
+                    <option value="image_text_audio" selected>Image and Text (with Audio)</option>
+                    <option value="image_audio">Image and Audio (no Text)</option>
+                    <option value="audio_text">Audio and Text (no Image)</option>
+                    <option value="audio_only">Audio Only</option>
+                </select>
+            </div>
+            <div id="flashcardContainer" aria-busy="false">
+                <p class="empty-message">This lesson has no cards to study.</p>
+            </div>
+        </div>
+
+        <div id="memoryGameTab" class="tab-content" role="tabpanel" aria-labelledby="memoryGameTabButton" hidden>
+            <h2>Play Memory Game</h2>
+            <div id="memoryGameInstructionsDisplay" class="instructions-display" aria-live="polite"></div>
+            <div class="memory-game-controls">
+                <p id="memoryGameProgress" class="micro-progress" aria-live="polite">0 of 0 pairs found.</p>
+                <label for="memoryGameDifficulty">Difficulty:</label>
+                <select id="memoryGameDifficulty">
+                    <option value="all">All Cards</option>
+                    <option value="4">Easy (4 pairs)</option>
+                    <option value="6">Medium (6 pairs)</option>
+                    <option value="8">Hard (8 pairs)</option>
+                    <option value="10">Expert (10 pairs)</option>
+                </select>
+                <label for="memoryGameMatchType">Match Type:</label>
+                <select id="memoryGameMatchType">
+                    <option value="identical">Identical Cards</option>
+                    <option value="image_audio">Image + Sound</option>
+                </select>
+                <button id="newMemoryGameButton" type="button">New Game / Shuffle</button>
+                <button id="revealMemoryCardsButton" type="button">Reveal All Cards</button>
+                <p id="memoryGameFeedback" class="feedback-message" aria-live="polite"></p>
+            </div>
+            <div id="memoryGameContainer" aria-busy="false">
+                <p class="empty-message">This lesson needs at least 2 cards for the memory game.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Interactive Lesson © <span id="currentYear"></span></p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="shared.js"></script>
+    <script src="player.js"></script>
+</body>
+</html>

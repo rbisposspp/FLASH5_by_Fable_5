@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Learning Tool: Flashcards & Memory Game</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+<body>
+    <a href="#mainContent" class="skip-link">Skip to main content</a>
+    <header>
+        <h1>Interactive Learning Tool: Flashcards & Memory Game</h1>
+    </header>
+
+    <main id="mainContent">
+        <div class="tab-buttons" role="tablist" aria-label="Main workspace sections">
+            <button id="creatorTabButton" class="active" role="tab" aria-selected="true" aria-controls="creatorTab" tabindex="0">Manage Content</button>
+            <button id="flashcardTabButton" role="tab" aria-selected="false" aria-controls="flashcardTab" tabindex="-1">Study Flashcards</button>
+            <button id="memoryGameTabButton" role="tab" aria-selected="false" aria-controls="memoryGameTab" tabindex="-1">Play Memory Game</button>
+        </div>
+
+        <div id="creatorTab" class="tab-content active" role="tabpanel" aria-labelledby="creatorTabButton">
+            <h2>Content & Card Set Management</h2>
+
+            <section class="card-set-management" aria-labelledby="cardSetManagementHeading">
+                <h3 id="cardSetManagementHeading">Manage Card Sets</h3>
+                <div class="set-controls">
+                    <label for="newSetName">New Set Name:</label>
+                    <input type="text" id="newSetName" placeholder="e.g., Animal Vocabulary">
+                    <button id="createNewSetButton" type="button">Create New Set</button>
+                    <button id="renameSetButton" type="button">Rename Current Set</button>
+                </div>
+                <div class="set-controls">
+                    <label for="cardSetSelect">Load Set:</label>
+                    <select id="cardSetSelect"></select>
+                    <button id="loadSetButton" type="button">Load Selected Set</button>
+                    <button id="saveSetButton" type="button" title="Saves all changes to the currently loaded set.">Save Current Set</button>
+                    <button id="deleteSetButton" type="button" class="danger-button" title="Deletes the currently loaded set. This action cannot be undone.">Delete Current Set</button>
+                    <button id="clearAllSetsButton" type="button" class="danger-button" title="Deletes all saved card sets. This action cannot be undone.">Clear All Sets</button>
+                </div>
+                <div class="set-controls import-export-controls">
+                    <button id="saveLessonButton" type="button" title="Generates a self-contained, playable lesson folder (Study + Memory) as a downloadable ZIP.">Save Lesson (ZIP)</button>
+                    <button id="exportSetButton" type="button" title="Downloads the currently loaded set as a JSON file that can be re-imported.">Export Set (JSON)</button>
+                    <button id="importSetButton" type="button">Import Set (JSON)</button>
+                    <input type="file" id="importSetFile" accept=".json" class="hidden">
+                </div>
+                 <fieldset class="set-controls custom-colors-controls">
+                    <legend>Customize Card Colors</legend>
+                    <div>
+                        <label for="cardFrontColor">Card Front Color:</label>
+                        <input type="color" id="cardFrontColor" value="#f0f0f0">
+                    </div>
+                    <div>
+                        <label for="cardBackColor">Card Back Color:</label>
+                        <input type="color" id="cardBackColor" value="#a7c7e7">
+                    </div>
+                </fieldset>
+                 <p id="setManagementFeedback" class="feedback-message" aria-live="polite"></p>
+            </section>
+
+            <section class="card-creation" aria-labelledby="cardCreationHeading">
+                <h3 id="cardCreationHeading">Add/Edit Cards in "<span id="currentSetNameDisplay">No Set Loaded</span>"</h3>
+                <p id="setCardCountDisplay" class="micro-progress" aria-live="polite">0 cards in this set.</p>
+                <input type="hidden" id="editingCardIdInput"> <!-- For tracking card being edited -->
+                <div class="controls">
+                    <div class="file-input-group">
+                        <label for="imageInput">Card Image (Optional):</label>
+                        <input type="file" id="imageInput" accept="image/*" multiple aria-describedby="currentImageFilename">
+                        <img id="currentImagePreview" src="" alt="" hidden>
+                        <span id="currentImageFilename" class="current-file-info" role="status" aria-live="polite"></span>
+                        <button type="button" id="clearImageButton" class="button-secondary" hidden>Clear Image</button>
+                    </div>
+                    <div class="input-group">
+                        <label for="wordInput">Word/Identifier (Required):</label>
+                        <input type="text" id="wordInput" placeholder="Enter word or phrase">
+                    </div>
+
+                    <div id="fileAudioGroup" class="file-input-group">
+                        <label for="audioInput">Audio File (Optional):</label>
+                        <input type="file" id="audioInput" accept="audio/*" aria-describedby="currentAudioFilename">
+                        <audio id="currentAudioPreview" controls hidden></audio>
+                        <span id="currentAudioFilename" class="current-file-info" role="status" aria-live="polite"></span>
+                        <button type="button" id="clearAudioButton" class="button-secondary" hidden>Clear Audio</button>
+                    </div>
+                    <button id="addOrUpdateCardButton" type="button">Add Card to Set</button>
+                     <p id="cardCreationFeedback" class="feedback-message" aria-live="polite"></p>
+                </div>
+            </section>
+
+            <section class="instruction-panel-creator" aria-labelledby="instructionPanelCreatorHeading">
+                <h3 id="instructionPanelCreatorHeading">Set Instructions</h3>
+                <label for="setInstructionsInput">Enter instructions for students using this set (will be shown in Study/Game tabs):</label>
+                <textarea id="setInstructionsInput" rows="4" placeholder="e.g., Flip the cards to learn the vocabulary. Then, test your memory with the game!"></textarea>
+            </section>
+
+            <section class="created-cards-overview" aria-labelledby="createdCardsListHeading">
+                <h3 id="createdCardsListHeading">Cards in Current Set</h3>
+                <div id="createdCardsList" aria-busy="false">
+                    <p id="noCardsInSetMessage">No cards in this set yet. Add some above!</p>
+                    </div>
+            </section>
+        </div>
+
+        <div id="flashcardTab" class="tab-content" role="tabpanel" aria-labelledby="flashcardTabButton" hidden>
+            <h2>Study Flashcards<span class="activeSetDisplay"></span></h2>
+            <div id="flashcardInstructionsDisplay" class="instructions-display" aria-live="polite"></div>
+            <div class="flashcard-controls">
+                <p id="studyCardCountDisplay" class="micro-progress" aria-live="polite">0 cards ready to study.</p>
+                <button id="flipAllButton" type="button">Flip All Cards</button>
+                <button id="shuffleDeckButton" type="button">Shuffle Deck</button>
+                <label class="toggle-switch-label">
+                    <input type="checkbox" id="reverseFlashcardsToggle">
+                    <span class="slider"></span>
+                    Show Word/Back First
+                </label>
+                <label for="studyModeSelect">Study Mode:</label>
+                <select id="studyModeSelect">
+                    <option value="image_text_audio" selected>Image and Text (with Audio)</option>
+                    <option value="image_audio">Image and Audio (no Text)</option>
+                    <option value="audio_text">Audio and Text (no Image)</option>
+                    <option value="audio_only">Audio Only</option>
+                </select>
+            </div>
+            <div id="flashcardContainer" aria-busy="false">
+                <p class="empty-message">Load or create a card set in the "Manage Content" tab to study.</p>
+                </div>
+        </div>
+
+        <div id="memoryGameTab" class="tab-content" role="tabpanel" aria-labelledby="memoryGameTabButton" hidden>
+            <h2>Play Memory Game<span class="activeSetDisplay"></span></h2>
+            <div id="memoryGameInstructionsDisplay" class="instructions-display" aria-live="polite"></div>
+            <div class="memory-game-controls">
+                <p id="memoryGameProgress" class="micro-progress" aria-live="polite">0 of 0 pairs found.</p>
+                <label for="memoryGameDifficulty">Difficulty:</label>
+                <select id="memoryGameDifficulty">
+                    <option value="all">All Cards</option>
+                    <option value="4">Easy (4 pairs)</option>
+                    <option value="6">Medium (6 pairs)</option>
+                    <option value="8">Hard (8 pairs)</option>
+                    <option value="10">Expert (10 pairs)</option>
+                </select>
+                <label for="memoryGameMatchType">Match Type:</label>
+                <select id="memoryGameMatchType">
+                    <option value="identical">Identical Cards</option>
+                    <option value="image_audio">Image + Sound</option>
+                </select>
+                <button id="newMemoryGameButton" type="button">New Game / Shuffle</button>
+                <button id="revealMemoryCardsButton" type="button">Reveal All Cards</button>
+                <p id="memoryGameFeedback" class="feedback-message" aria-live="polite"></p>
+            </div>
+            <div id="memoryGameContainer" aria-busy="false">
+                <p class="empty-message">Load or create a card set with at least 2 cards in the "Manage Content" tab to play.</p>
+                </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Interactive Learning Tool © <span id="currentYear"></span></p>
+    </footer>
+
+    <script src="shared.js" defer></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
